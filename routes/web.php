@@ -18,6 +18,9 @@ Route::get('/', function () {
 });
 
 
+
 Route::resource('/categories', 'CategorieController');
 Route::resource('/articles', 'ArticleController');
 Route::resource('/marques', 'MarqueController');
+##Route::resource('/categories',[CategorieController::class]);
+

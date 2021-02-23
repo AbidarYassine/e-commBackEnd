@@ -16,10 +16,18 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
-        'name',
+    protected $fillable = 
+        'login',
         'email',
         'password',
+        'uSexe',
+        'uNom',
+        'uPrenom',
+        'uTel',
+        'uAdresse',
+        'uCodePostal',
+        'uId',
+        'privillege_id'
     ];
 
     /**
@@ -40,4 +48,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function remarques()
+    {
+        return $this->hasMany(Remarque::class);
+    }
+
+    public function commands()
+    {
+        return $this->hasMany(Command::class);
+    }
 }

@@ -13,14 +13,15 @@ class CreateBoutiquesTable extends Migration
      */
     public function up()
     {
+//        protected $fillable = ['id', 'boutLib', 'botAdresse', 'boutTel', 'boutFax', 'boutMail', 'boutDescription'];
         Schema::create('boutiques', function (Blueprint $table) {
             $table->id();
-            $table->string('boutlib');
-            $table->string('bouyadresse');
-            $table->string('bouttel');
-            $table->string('boutfax');
-            $table->string('boutmail');
-            $table->string('boutdescription');
+            $table->string("boutLib", 50);
+            $table->string("botAdresse", 100);
+            $table->string("boutTel", 15);
+            $table->string("boutFax", 15);
+            $table->string("boutMail", 50);
+            $table->string("boutDescription", 200);
             $table->timestamps();
         });
     }

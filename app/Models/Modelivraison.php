@@ -5,17 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Boutique extends Model
+class Modelivraison extends Model
 {
     use HasFactory;
 
-
-    protected $fillable = ['id', 'boutLib', 'botAdresse', 'boutTel', 'boutFax', 'boutMail', 'boutDescription'];
-
+    protected $fillable = ['id', 'modlivLib', 'modelibDesc'];
 
     public function livraisons()
     {
         return $this->hasMany(Livraison::class);
     }
-
 }
