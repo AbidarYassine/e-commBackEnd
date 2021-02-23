@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCommandsTable extends Migration
+class CreateRemarquesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateCommandsTable extends Migration
      */
     public function up()
     {
-        Schema::create('commands', function (Blueprint $table) {
-            $table->bigIncrements("id");
-            $table->date("cmdDate");
-            $table->float('toatlcmd', 8, 2);
-            $table->string("cmdDescription");
-            $table->bigInteger('etat_command_id', false, true)->unsigned()->index();
+        Schema::create('remarques', function (Blueprint $table) {
+            $table->id();
+            $table->string("title", 50);
+            $table->string("description");
             $table->bigInteger('user_id', false, true)->unsigned()->index();
             $table->foreign('user_id')
                 ->references('id')
@@ -36,6 +34,6 @@ class CreateCommandsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('commands');
+        Schema::dropIfExists('remarques');
     }
 }

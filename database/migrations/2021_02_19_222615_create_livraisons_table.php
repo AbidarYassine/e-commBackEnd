@@ -18,9 +18,21 @@ class CreateLivraisonsTable extends Migration
             $table->date("livdate");
             $table->string("livdescription");
             $table->bigInteger("command_id", false, true)->unsigned()->index();
+            $table->bigInteger("modeliv_id", false, true)->unsigned()->index();
+            $table->bigInteger("boutique_id", false, true)->unsigned()->index();
             $table->foreign('command_id')
                 ->references('id')
                 ->on('commands')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('modeliv_id')
+                ->references('id')
+                ->on('modelivraisons')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('boutique_id')
+                ->references('id')
+                ->on('boutiques')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->timestamps();

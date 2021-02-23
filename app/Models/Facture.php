@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Facture extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'id',
         'datefact',
@@ -15,7 +16,8 @@ class Facture extends Model
         'tva',
         'remise',
         'totalht',
-        'totalttc'
+        'totalttc',
+        'command_id'
     ];
 
 

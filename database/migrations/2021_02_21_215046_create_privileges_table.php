@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMarquesTable extends Migration
+class CreatePrivilegesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateMarquesTable extends Migration
      */
     public function up()
     {
-        Schema::create('marques', function (Blueprint $table) {
+        Schema::create('privileges', function (Blueprint $table) {
             $table->id();
-            $table->string('marqlib');
+            $table->string("privLib");
+            $table->string("description");
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ class CreateMarquesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('marques');
+        Schema::dropIfExists('privileges');
     }
 }
