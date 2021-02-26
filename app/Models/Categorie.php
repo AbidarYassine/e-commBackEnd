@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Categorie extends Model
 {
     use HasFactory;
+
+
+
+    protected $fillable = ['id', 'catlib'];
+
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
+
 }

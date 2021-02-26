@@ -23,6 +23,10 @@ class Command extends Model
         return $this->hasOne(Livraison::class);
     }
 
+     public function article()
+    {
+        return $this->belongsToMany(Article::class);
+    }
     public function facture()
     {
         return $this->hasOne(Facture::class);

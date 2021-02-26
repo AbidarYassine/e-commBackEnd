@@ -22,7 +22,7 @@ class Livraison extends Model
     {
         return $this->belongsTo(Command::class);
     }
-
+ 
     public function modelivraison()
     {
         return $this->belongsTo(Modelivraison::class);
