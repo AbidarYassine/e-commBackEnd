@@ -30,11 +30,11 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->bigInteger('privillege_id', false, true)->unsigned()->index();
-           /* $table->foreign('privillege_id')
+            $table->foreign('privillege_id')
                 ->references('id')
                 ->on('privileges')
                 ->onUpdate('cascade')
-                ->onDelete('cascade');*/
+                ->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
         });

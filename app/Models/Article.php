@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Article extends Model
 {
     use HasFactory;
-    
-     protected $fillable = ['id', 'ertdesignation', 'prix', 'qtestock', 'tauttva', 'tautremise', 'artimg','artdescription', 'marque_id', 'category_id','fournisseur_id'];
 
-      public function marques()
+    protected $fillable = ['id', 'ertdesignation', 'prix', 'qtestock', 'tauttva', 'tautremise', 'artimg', 'artdescription', 'marque_id', 'category_id', 'fournisseur_id'];
+
+    public function marques()
     {
         return $this->belongsTo(Marque::class);
     }
@@ -33,10 +33,14 @@ class Article extends Model
     }
 
 
-
-    public function command()
+    public function commands()
     {
-        return $this->hasMany(command::class);
+        return $this->belongsToMany(Command::class);
+    }
+
+    public function proprietes()
+    {
+        return $this->belongsToMany(Propriete::class);
     }
 
 }

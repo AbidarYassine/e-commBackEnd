@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Facture;
+use App\Service\FactureService;
 use Illuminate\Http\Request;
 
 class FactureController extends Controller
@@ -12,9 +13,9 @@ class FactureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(FactureService $factureService)
     {
-        //
+        return $factureService->getAllFacture();
     }
 
     /**
@@ -30,29 +31,40 @@ class FactureController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, FactureService $factureService)
     {
-        //
+//        $facture = new Facture();
+        $facture = [
+            "datefact" => $request->datefact,
+            "baseht" => $request->baseht,
+            "tva" => $request->tva,
+            "remise" => $request->remise,
+            "totalht" => $request->totalht,
+            "totalttc" => $request->totalttc,
+            "command_id" => $request->idCommande,
+            "tva" => $request->tva,
+        ];
+        return $factureService->save($facture);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Facture  $facture
+     * @param \App\Models\Facture $facture
      * @return \Illuminate\Http\Response
      */
-    public function show(Facture $facture)
+    public function show($id, FactureService $factureService)
     {
-        //
+        return $factureService->findById($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Facture  $facture
+     * @param \App\Models\Facture $facture
      * @return \Illuminate\Http\Response
      */
     public function edit(Facture $facture)
@@ -63,8 +75,8 @@ class FactureController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Facture  $facture
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Facture $facture
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Facture $facture)
@@ -75,7 +87,7 @@ class FactureController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Facture  $facture
+     * @param \App\Models\Facture $facture
      * @return \Illuminate\Http\Response
      */
     public function destroy(Facture $facture)
