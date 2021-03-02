@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modelivraison;
+use App\Service\ModeLivraisonService;
 use Illuminate\Http\Request;
 
 class ModelivraisonController extends Controller
@@ -12,9 +13,9 @@ class ModelivraisonController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ModeLivraisonService $modeLivService)
     {
-        //
+        return $modeLivService->getAllMode();
     }
 
     /**
@@ -30,29 +31,33 @@ class ModelivraisonController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, ModeLivraisonService $modeLivService)
     {
-        //
+        $facture = [
+            "modlivLib" => $request->modlivLib,
+            "modelibDesc" => $request->modelibDesc,
+        ];
+        return $modeLivService->save($facture);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Modelivraison  $modelivraison
+     * @param \App\Models\Modelivraison $modelivraison
      * @return \Illuminate\Http\Response
      */
-    public function show(Modelivraison $modelivraison)
+    public function show($modelivraison, ModeLivraisonService $modeLivService)
     {
-        //
+        return $modeLivService->findById($modelivraison);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Modelivraison  $modelivraison
+     * @param \App\Models\Modelivraison $modelivraison
      * @return \Illuminate\Http\Response
      */
     public function edit(Modelivraison $modelivraison)
@@ -63,23 +68,23 @@ class ModelivraisonController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Modelivraison  $modelivraison
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Modelivraison $modelivraison
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Modelivraison $modelivraison)
+    public function update(Request $request, ModeLivraisonService $modeLivService)
     {
-        //
+        return $modeLivService->updateModeLivraison($request);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Modelivraison  $modelivraison
+     * @param \App\Models\Modelivraison $modelivraison
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Modelivraison $modelivraison)
+    public function destroy($modelivraison, ModeLivraisonService $modeLivService)
     {
-        //
+        return $modeLivService->deleteModeLivraison($modelivraison);
     }
 }

@@ -45,7 +45,6 @@ class FactureController extends Controller
             "totalht" => $request->totalht,
             "totalttc" => $request->totalttc,
             "command_id" => $request->idCommande,
-            "tva" => $request->tva,
         ];
         return $factureService->save($facture);
     }
@@ -79,9 +78,9 @@ class FactureController extends Controller
      * @param \App\Models\Facture $facture
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Facture $facture)
+    public function update(Request $request, FactureService $factureService)
     {
-        //
+        return $factureService->updateFactures($request);
     }
 
     /**
@@ -90,8 +89,13 @@ class FactureController extends Controller
      * @param \App\Models\Facture $facture
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Facture $facture)
+    public function destroy($id, FactureService $factureService)
     {
-        //
+        return $factureService->deleteFacture($id);
+    }
+
+    public function findByCommande($idCommande, FactureService $factureService)
+    {
+        return $factureService->findByIdCommande($idCommande);
     }
 }
