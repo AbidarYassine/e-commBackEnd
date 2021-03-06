@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class MarqueController extends Controller
+class MarqueController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +13,9 @@ class MarqueController extends Controller
      */
     public function index()
     {
-        //
+        $marque = marque::all();
+
+        return view('Marque.index',['$marque'->$categorie]);
     }
 
     /**
@@ -21,10 +23,10 @@ class MarqueController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+    // public function create()
+    // {
+    //     return view('Marque.create');
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -34,7 +36,10 @@ class MarqueController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $marque = new Marque();
+
+        $marque->lib= $request->input('marqlib');
+        $marque->save();
     }
 
     /**
@@ -45,7 +50,13 @@ class MarqueController extends Controller
      */
     public function show($id)
     {
-        //
+        $marque = marque::find($id);
+
+          if (is_null($marque)) {
+            return $this-> sendEror('marque not found')
+          }
+
+          return $this-> sendResponse($marque->toArray(),'marque creted succefully');
     }
 
     /**
@@ -56,7 +67,9 @@ class MarqueController extends Controller
      */
     public function edit($id)
     {
-        //
+        $marque = marque::find($id);
+
+        return view('Marque.edit', ['marque'=> $marque]);
     }
 
     /**
@@ -68,7 +81,11 @@ class MarqueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $marque = Marque::find($id);
+        $marque->lib= $request->input('marqlib');
+        $marque->save();
+
+        return redirect('marques');
     }
 
     /**
@@ -79,6 +96,8 @@ class MarqueController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $marque->delete();
+ 
+        return $this-> sendResponse($marque->toArray(),'marque deleted succefully');
     }
 }

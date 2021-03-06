@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class CategorieController extends Controller
+use App\Categorie;
+use App\Models\Categorie as ModelsCategorie;
+use Validator;
+
+class CategorieController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +17,9 @@ class CategorieController extends Controller
      */
     public function index()
     {
-        //
+       return  ModelsCategorie::all();
+
+        //return view('categorie.index', ['categories'->$categorie]);
     }
 
     /**
@@ -21,10 +27,10 @@ class CategorieController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+    // public function create()
+    // {
+    //     return view('Categorie.create');
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -34,7 +40,12 @@ class CategorieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $categorie = new ModelsCategorie();
+
+        $categorie->lib = $request->input('catlib');
+        $categorie->save();
+        //$categorie->Date= $request->input('');
+
     }
 
     /**
@@ -45,7 +56,13 @@ class CategorieController extends Controller
      */
     public function show($id)
     {
-        //
+        $categorie = ModelsCategorie::find($id);
+
+        if (is_null($categorie)) {
+            return $this->sendEror('categorie not found');
+        }
+
+        return $this->sendResponse($categorie->toArray(), 'categorie creted succefully');
     }
 
     /**
@@ -56,7 +73,9 @@ class CategorieController extends Controller
      */
     public function edit($id)
     {
-        //
+        $categorie = ModelsCategorie::find($id);
+
+        return view('Categorie.edit', ['categorie' => $categorie]);
     }
 
     /**
@@ -68,7 +87,11 @@ class CategorieController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $categorie = ModelsCategorie::find($id);
+        $categorie->lib = $request->input('catlib');
+        $categorie->save();
+
+        return redirect('categories');
     }
 
     /**
@@ -77,8 +100,10 @@ class CategorieController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    /*public function destroy($id)
     {
-        //
-    }
+        $categorie->delete(); // categorie
+
+        return $this->sendResponse($categorie->toArray(), 'categorie deleted succefully');
+    }*/
 }

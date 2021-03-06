@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class ProprieteController extends Controller
+class ProprieteController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +13,9 @@ class ProprieteController extends Controller
      */
     public function index()
     {
-        //
+        $proriete = proriete::all();
+
+        return view('Proriete.index',['prorietes'->$categorie]);
     }
 
     /**
@@ -21,10 +23,10 @@ class ProprieteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+    // public function create()
+    // {
+    //     return view('Proriete.create');
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -34,7 +36,10 @@ class ProprieteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $proriete = new Proriete();
+
+        $proriete->lib= $request->input('proriete');
+        $proriete->save();
     }
 
     /**
@@ -45,7 +50,13 @@ class ProprieteController extends Controller
      */
     public function show($id)
     {
-        //
+        $proriete = Proriete::find($id);
+
+        if (is_null($proriete)) {
+          return $this-> sendEror('proriete not found')
+        }
+
+        return $this-> sendResponse($proriete->toArray(),'proriete creted succefully');
     }
 
     /**
@@ -56,7 +67,9 @@ class ProprieteController extends Controller
      */
     public function edit($id)
     {
-        //
+        $proriete = Proriete::find($id);
+
+        return view('Proriete.edit', ['proriete'=> $proriete]);
     }
 
     /**
@@ -68,7 +81,12 @@ class ProprieteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $proriete = Proriete::find($id);
+        $proriete->lib= $request->input('proplib');
+        $proriete->valeur= $request->input('propvaleur');
+        $proriete->save();
+
+        return redirect('proriete');
     }
 
     /**
@@ -79,6 +97,8 @@ class ProprieteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $proriete->delete();
+ 
+        return $this-> sendResponse($proriete->toArray(),'proriete deleted succefully');
     }
 }

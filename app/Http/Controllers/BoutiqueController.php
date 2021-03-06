@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Boutique;
 use Illuminate\Http\Request;
 
-class BoutiqueController extends Controller
+class BoutiqueController extends BaseController
 {
     /**
      * Display a listing of the resource.

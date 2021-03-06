@@ -36,7 +36,7 @@ class Article extends Model
 
     public function command()
     {
-        return $this->hasMany(command::class);
+        return $this->belongsToMany(command::class);
     }
 
 }
