@@ -30,7 +30,7 @@ class CommandController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -41,7 +41,7 @@ class CommandController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Command  $command
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
     public function show(Command $command)
@@ -52,7 +52,7 @@ class CommandController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Command  $command
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
     public function edit(Command $command)
@@ -63,8 +63,8 @@ class CommandController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Command  $command
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Command $command)
@@ -75,7 +75,7 @@ class CommandController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Command  $command
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
     public function destroy(Command $command)

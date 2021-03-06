@@ -72,7 +72,13 @@ Route::group(['prefix' => 'privileges'], function () {
     Route::get("/libelle/{libelle}", [Controllers\PrivilegeController::class, 'findByLibelle']);
     Route::delete("/id/{id}", [Controllers\PrivilegeController::class, 'destroy']);
     Route::put("/update/{id}", [Controllers\PrivilegeController::class, 'update']);
+});
 
-
+Route::group(['prefix' => 'remarques'], function () {
+    Route::get("/", [Controllers\RemarqueController::class, 'index']);
+    Route::post("/", [Controllers\RemarqueController::class, 'store']);
+    Route::get("/id/{id}", [Controllers\RemarqueController::class, 'show']);
+    Route::delete("/id/{id}", [Controllers\RemarqueController::class, 'destroy']);
+    Route::put("/update/{id}", [Controllers\RemarqueController::class, 'update']);
 });
 

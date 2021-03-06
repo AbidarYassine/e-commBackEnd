@@ -16,7 +16,6 @@ class FactureController extends Controller
      */
     public function index(FactureService $factureService)
     {
-//        FactureResource(User::findOrFail($id));
         return FactureResource::collection($factureService->getAllFacture());
 
     }
