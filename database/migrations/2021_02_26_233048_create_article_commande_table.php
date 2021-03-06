@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateArticleProprietesTable extends Migration
+class CreateArticleCommandeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,15 @@ class CreateArticleProprietesTable extends Migration
      */
     public function up()
     {
-        Schema::create('article_proprietes', function (Blueprint $table) {
+        Schema::create('article_commande', function (Blueprint $table) {
             $table->id();
             $table->foreignId('article_id')->constrained()->onDelete('cascade');
-            $table->foreignId('propriete_id')->constrained()->onDelete('cascade');
+            $table->bigInteger("command_id", false, true)->unsigned()->index();
+            $table->foreign('command_id')
+                ->references('id')
+                ->on('commands')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +33,6 @@ class CreateArticleProprietesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('article_proprietes');
+        Schema::dropIfExists('article_commande');
     }
 }

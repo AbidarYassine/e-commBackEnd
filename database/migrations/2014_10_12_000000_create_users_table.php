@@ -29,12 +29,12 @@ class CreateUsersTable extends Migration
             $table->string('uId', 20);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->bigInteger('privillege_id', false, true)->unsigned()->index();
-           /* $table->foreign('privillege_id')
+            $table->bigInteger('privilege_id', false, true)->unsigned()->index();
+            $table->foreign('privilege_id')
                 ->references('id')
                 ->on('privileges')
                 ->onUpdate('cascade')
-                ->onDelete('cascade');*/
+                ->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
         });

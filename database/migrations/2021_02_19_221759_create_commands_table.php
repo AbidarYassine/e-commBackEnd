@@ -25,6 +25,11 @@ class CreateCommandsTable extends Migration
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->foreign('etat_command_id')
+                ->references('id')
+                ->on('etat_commands')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -20,7 +20,7 @@ class CreateLivraisonsTable extends Migration
             $table->bigInteger("command_id", false, true)->unsigned()->index();
             $table->bigInteger("modeliv_id", false, true)->unsigned()->index();
             $table->bigInteger("boutique_id", false, true)->unsigned()->index();
-           /* $table->foreign('command_id')
+            $table->foreign('command_id')
                 ->references('id')
                 ->on('commands')
                 ->onUpdate('cascade')
@@ -34,7 +34,7 @@ class CreateLivraisonsTable extends Migration
                 ->references('id')
                 ->on('boutiques')
                 ->onUpdate('cascade')
-                ->onDelete('cascade');*/
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

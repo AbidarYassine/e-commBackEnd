@@ -13,7 +13,10 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
+<<<<<<< HEAD
         "laravel/sanctum": "^2.9",
+=======
+>>>>>>> e7e904e8b6febc7acab03b94f642067432c2b598
         "laravel/tinker": "^2.5",
         "tymon/jwt-auth": "^1.0"
     },
