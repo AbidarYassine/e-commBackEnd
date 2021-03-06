@@ -64,3 +64,15 @@ Route::group(['middleware' => 'auth:api'], function () {
     });
 });
 
+
+Route::group(['prefix' => 'privileges'], function () {
+    Route::get("/", [Controllers\PrivilegeController::class, 'index']);
+    Route::post("/", [Controllers\PrivilegeController::class, 'store']);
+    Route::get("/id/{id}", [Controllers\PrivilegeController::class, 'show']);
+    Route::get("/libelle/{libelle}", [Controllers\PrivilegeController::class, 'findByLibelle']);
+    Route::delete("/id/{id}", [Controllers\PrivilegeController::class, 'destroy']);
+    Route::put("/update/{id}", [Controllers\PrivilegeController::class, 'update']);
+
+
+});
+

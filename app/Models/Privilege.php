@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Privilege extends Model
 {
+    protected $table = "privileges";
     use HasFactory;
 
     protected $fillable = ['id', 'privLib', 'description'];

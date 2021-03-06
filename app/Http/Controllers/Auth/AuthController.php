@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserRessource;
 use App\Models\User;
+use App\Service\PrivillegeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -46,7 +48,7 @@ class AuthController extends Controller
     }//end login()
 
 
-    public function register(Request $request)
+    public function register(Request $request, PrivillegeService $privilService)
     {
         $validator = Validator::make(
             $request->all(),
@@ -63,15 +65,25 @@ class AuthController extends Controller
                 422
             );
         }
-
+        /* set Default Role to new User*/
+        $privilId = 0;
+        $privil = $privilService->findByLibelle("USER");
+        if ($privil == null) {
+            $privillege = [
+                "privLib" => strtoupper("USER"),
+                "description" => "USER Privilege",
+            ];
+            $privilId = $privilService->save($privillege)->id;
+        } else {
+            $privilId = $privil->id;
+        }
         $user = User::create(
             array_merge(
                 $validator->validated(),
-                ['password' => bcrypt($request->password)]
+                ['password' => bcrypt($request->password), 'privilege_id' => $privilId]
             )
         );
-
-        return response()->json(['message' => 'User created successfully', 'user' => $user]);
+        return response()->json(['message' => 'User created successfully', 'user' => new UserRessource($user)]);
 
     }//end register()
 

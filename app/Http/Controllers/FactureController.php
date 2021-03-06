@@ -5,17 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Facture;
 use App\Service\FactureService;
 use Illuminate\Http\Request;
+use App\Http\Resources\FactureResource;
 
 class FactureController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(FactureService $factureService)
     {
-        return $factureService->getAllFacture();
+//        FactureResource(User::findOrFail($id));
+        return FactureResource::collection($factureService->getAllFacture());
+
     }
 
     /**
@@ -32,7 +35,7 @@ class FactureController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return FactureResource
      */
     public function store(Request $request, FactureService $factureService)
     {
@@ -46,18 +49,18 @@ class FactureController extends Controller
             "totalttc" => $request->totalttc,
             "command_id" => $request->idCommande,
         ];
-        return $factureService->save($facture);
+        return new FactureResource($factureService->save($facture));
     }
 
     /**
      * Display the specified resource.
      *
      * @param \App\Models\Facture $facture
-     * @return \Illuminate\Http\Response
+     * @return FactureResource
      */
     public function show($id, FactureService $factureService)
     {
-        return $factureService->findById($id);
+        return new FactureResource($factureService->findById($id));
     }
 
     /**
@@ -76,7 +79,7 @@ class FactureController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Facture $facture
-     * @return \Illuminate\Http\Response
+     * @return FactureResource
      */
     public function update(Request $request, FactureService $factureService)
     {
@@ -87,7 +90,7 @@ class FactureController extends Controller
      * Remove the specified resource from storage.
      *
      * @param \App\Models\Facture $facture
-     * @return \Illuminate\Http\Response
+     * @return FactureResource
      */
     public function destroy($id, FactureService $factureService)
     {
@@ -96,6 +99,6 @@ class FactureController extends Controller
 
     public function findByCommande($idCommande, FactureService $factureService)
     {
-        return $factureService->findByIdCommande($idCommande);
+        return new FactureResource($factureService->findByIdCommande($idCommande));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BoutiqueRessource;
 use App\Models\Boutique;
 use App\Service\BoutiqueService;
 use App\Service\FactureService;
@@ -22,11 +23,11 @@ class BoutiqueController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(BoutiqueService $boutiqueService)
     {
-        return $boutiqueService->getAllBoutique();
+        return BoutiqueRessource::collection($boutiqueService->getAllBoutique());
     }
 
     /**
@@ -43,7 +44,7 @@ class BoutiqueController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return BoutiqueRessource
      */
     public function store(Request $request, BoutiqueService $boutiqueService)
     {
@@ -56,18 +57,18 @@ class BoutiqueController extends Controller
             "boutDescription" => $request->boutDescription,
             "command_id" => $request->idCommande,
         ];
-        return $boutiqueService->save($boutique);
+        return new BoutiqueRessource($boutiqueService->save($boutique));
     }
 
     /**
      * Display the specified resource.
      *
      * @param \App\Models\Boutique $boutique
-     * @return \Illuminate\Http\Response
+     * @return BoutiqueRessource
      */
     public function show($boutique, BoutiqueService $boutiqueService)
     {
-        return $boutiqueService->findById($boutique);
+        return new BoutiqueRessource($boutiqueService->findById($boutique));
     }
 
     /**

@@ -7,10 +7,12 @@ use App\Service\BoutiqueService;
 use App\Service\FactureService;
 use App\Service\LivraisonService;
 use App\Service\ModeLivraisonService;
+use App\Service\PrivillegeService;
 use App\Service\ServiceImpl\BoutiqueServiceImpl;
 use App\Service\ServiceImpl\FactureServiceImpl;
 use App\Service\ServiceImpl\LivraisonImpl;
 use App\Service\ServiceImpl\ModeLivraisonServiceImpl;
+use App\Service\ServiceImpl\PrivillegeServiceImpl;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\schema;
 
@@ -35,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(BoutiqueService::class, function () {
             return new BoutiqueServiceImpl();
+        });
+        $this->app->bind(PrivillegeService::class, function () {
+            return new PrivillegeServiceImpl();
         });
     }
 
