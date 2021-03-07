@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exception\FactureNotFoundException;
 use App\Models\Facture;
 use App\Service\FactureService;
+use http\Client\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\FactureResource;
 
@@ -54,23 +57,19 @@ class FactureController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Facture $facture
-     * @return FactureResource
+     * @param $id
+     * @param FactureService $factureService
+     * @return JsonResponse
      */
-    public function show($id, FactureService $factureService)
+    public function show($id, FactureService $factureService): JsonResponse
     {
-        return new FactureResource($factureService->findById($id));
-    }
+        try {
+            $facture = $factureService->findById($id);
+        } catch (FactureNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 404);
+        }
+        return response()->json(["data" => new FactureResource($facture), "status" => '200']);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Facture $facture
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Facture $facture)
-    {
-        //
     }
 
     /**

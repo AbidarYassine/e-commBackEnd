@@ -4,6 +4,7 @@
 namespace App\Service\ServiceImpl;
 
 
+use App\Exception\FactureNotFoundException;
 use App\Models\Command;
 use App\Models\Facture;
 use App\Service\FactureService;
@@ -18,7 +19,12 @@ class FactureServiceImpl implements FactureService
 
     public function findById($id)
     {
-        return Facture::findOrFail($id);
+        $facture = Facture::find($id);
+        if (is_null($facture)) {
+            throw new FactureNotFoundException('Facture not found by ID ' . $id, 404);
+        }
+        return $facture;
+
     }
 
     public function deleteFacture($idFacture)
