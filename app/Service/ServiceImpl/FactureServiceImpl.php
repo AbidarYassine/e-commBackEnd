@@ -4,18 +4,27 @@
 namespace App\Service\ServiceImpl;
 
 
-use App\Exception\CommandNotFountException;
-use App\Exception\FactureNotFoundException;
+use App\Exceptions\Command\CommandNotFountException;
+use \App\Exceptions\Facture\FactureNotFoundException;
+use \App\Exceptions\Facture\FactureAlreadyExistException;
 use App\Models\Command;
 use App\Models\Facture;
 use App\Service\FactureService;
+use Illuminate\Support\Facades\DB;
+use function PHPUnit\Framework\isNull;
 
 class FactureServiceImpl implements FactureService
 {
 
     public function save($facture)
     {
+        $f = DB::table('factures')->where('command_id', $facture["command_id"])->first();
+        if ($f) {
+            throw new FactureAlreadyExistException('Facture Already Exists ', 422);
+        }
         return Facture::create($facture);
+
+
     }
 
     public function findById($id)

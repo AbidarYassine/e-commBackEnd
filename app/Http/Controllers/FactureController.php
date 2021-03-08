@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Exception\CommandNotFountException;
-use App\Exception\FactureNotFoundException;
+
+use App\Exceptions\Command\CommandNotFountException;
+use App\Exceptions\Facture\FactureAlreadyExistException;
+use App\Exceptions\Facture\FactureNotFoundException;
 use App\Http\Requests\FactureStoreRequest;
-use App\Models\Facture;
 use App\Service\FactureService;
 use App\Traits\GeneralTrait;
-use http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\FactureResource;
-use Illuminate\Support\Facades\Validator;
 
 class FactureController extends Controller
 {
@@ -33,43 +32,29 @@ class FactureController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param FactureStoreRequest $request
      * @param FactureService $factureService
      * @return JsonResponse
      */
-    public function store(Request $request, FactureService $factureService): JsonResponse
+    public function store(FactureStoreRequest $request, FactureService $factureService): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'datefact' => 'required|date|date_format:Y-m-d|after:yesterday',
-            'baseht' => 'required|numeric',
-            "tva" => 'required|numeric',
-            "remise" => 'required|numeric',
-            "totalht" => 'required|numeric',
-            "totalttc" => 'required|numeric',
-            'command_id' => 'exists:App\Models\Command,id'
-        ], [], [
-            'datefact' => 'Date Facture',
-            'baseht' => 'Base Hors Taxe',
-            'tva' => 'TVA',
-            'remise' => 'Remise',
-            'totalht' => 'Total Hors Taxe',
-            'totalttc' => 'TTC',
-            'command_id' => 'Command'
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->messages(), 500);
+        try {
+            $facture = [
+                "datefact" => $request->datefact,
+                "baseht" => $request->baseht,
+                "tva" => $request->tva,
+                "remise" => $request->remise,
+                "totalht" => $request->totalht,
+                "totalttc" => $request->totalttc,
+                "command_id" => $request->command_id,
+            ];
+            $factureSaved = $factureService->save($facture);
+        } catch (FactureAlreadyExistException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
         }
-        $facture = [
-            "datefact" => $request->datefact,
-            "baseht" => $request->baseht,
-            "tva" => $request->tva,
-            "remise" => $request->remise,
-            "totalht" => $request->totalht,
-            "totalttc" => $request->totalttc,
-            "command_id" => $request->command_id,
-        ];
-        return $this->returnData(new FactureResource($factureService->save($facture)), '201');
-
+        return $this->returnData(new FactureResource($factureSaved), '201');
 
     }
 
@@ -80,12 +65,13 @@ class FactureController extends Controller
      * @param FactureService $factureService
      * @return JsonResponse
      */
-    public function show($id, FactureService $factureService): JsonResponse
+    public
+    function show($id, FactureService $factureService): JsonResponse
     {
         try {
             $facture = $factureService->findById($id);
         } catch (FactureNotFoundException $ex) {
-            return response()->json(["error" => $ex->getMessage()], 404);
+            return response()->json(["error" => $ex->getMessage()], 422);
         }
         return $this->returnData(new FactureResource($facture), '200');
 
@@ -94,16 +80,19 @@ class FactureController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param FactureStoreRequest $request
      * @param FactureService $factureService
      * @return JsonResponse
      */
-    public function update(Request $request, FactureService $factureService): JsonResponse
+    public
+    function update(FactureStoreRequest $request, FactureService $factureService): JsonResponse
     {
         try {
             $factureService->updateFactures($request);
-        } catch (FactureNotFoundException $ex) {
-            return response()->json(["error" => $ex->getMessage()], 404);
+        } catch (FactureNotFoundException | CommandNotFountException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
         }
         return $this->returnSuccessMessage('Successfully update Facture', 202);
     }
@@ -115,7 +104,8 @@ class FactureController extends Controller
      * @param FactureService $factureService
      * @return JsonResponse
      */
-    public function destroy($id, FactureService $factureService): JsonResponse
+    public
+    function destroy($id, FactureService $factureService): JsonResponse
     {
         try {
             $factureService->deleteFacture($id);
@@ -125,7 +115,8 @@ class FactureController extends Controller
         return $this->returnSuccessMessage('Successfully delete Facture And Command Associate', 204);
     }
 
-    public function findByCommande($idCommande, FactureService $factureService): JsonResponse
+    public
+    function findByCommande($idCommande, FactureService $factureService): JsonResponse
     {
         try {
             $facture = $factureService->findByIdCommande($idCommande);

@@ -15,14 +15,14 @@ class FactureResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'            => $this->id,
-            'DateFacture'   => $this->datefact,
-            'baseHt'        => $this->baseht,
-            'tva'           => $this->tva,
-            'remise'        => $this->remise,
-            'totalHT'       => $this->totalht,
-            'totalTTC'      => $this->totalttc,
-            'command_id'    => $this->command,
+            'id' => $this->id,
+            'DateFacture' => $this->datefact,
+            'baseHt' => $this->baseht,
+            'tva' => $this->tva,
+            'remise' => $this->remise,
+            'totalHT' => $this->totalht,
+            'totalTTC' => $this->totalttc,
+            'command' => $this->command,
         ];
     }
 }

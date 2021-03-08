@@ -13,7 +13,7 @@ class CreateFacturesTable extends Migration
      */
     public function up()
     {
-        
+
         Schema::create('factures', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->date("datefact");
@@ -22,7 +22,7 @@ class CreateFacturesTable extends Migration
             $table->float("remise", 8, 2);
             $table->float("totalht", 10, 2);
             $table->float("totalttc", 10, 2);
-            $table->bigInteger('command_id', false, true)->unsigned()->index();
+            $table->bigInteger('command_id', false, true)->unique()->unsigned()->index();
             $table->foreign('command_id')
                 ->references('id')
                 ->on('commands')

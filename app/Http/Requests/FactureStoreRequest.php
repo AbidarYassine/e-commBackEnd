@@ -35,24 +35,16 @@ class FactureStoreRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function attributes(): array
     {
         return [
-            ## required Validation
-            'datefact.required' => 'Date Facture is required required',
-            'baseht.required' => 'Base Hors Taxe is required',
-            'tva.required' => 'TVA is required',
-            'remise.required' => 'remise is required',
-            'totalht.required' => 'Total Hors Taxe is required',
-            'totalttc.required' => 'TTC is required',
-            ## number Validation
-            'baseht.numeric' => 'Base Hors Taxe must be an numeric',
-            'baseht.tva' => 'TVA must be an numeric',
-            'remise.numeric' => 'Remise must be an numeric',
-            'totalht.numeric' => 'Total Hors Taxe must be an numeric',
-            'totalttc.numeric' => 'TTC must be an numeric',
-            ## Exist Validation
-            'command_id' => 'Command does not exists',
+            'datefact' => 'Date Facture',
+            'baseht' => 'Base Hors Taxe',
+            'tva' => 'TVA',
+            'remise' => 'remise',
+            'totalht' => 'Total Hors Taxe',
+            'totalttc' => 'TTC',
+            'command_id' => 'Command',
         ];
     }
 
