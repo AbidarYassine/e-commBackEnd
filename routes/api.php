@@ -76,17 +76,3 @@ Route::group(['prefix' => 'privileges'], function () {
 
 
 });
-
-<<<<<<< HEAD
-
-
-Route::get('/', function () {
-    return "hello";
-});
-
-
-Route::get('categories', [CategorieController::class,'index']);
-Route::resource('/articles', 'ArticleController');
-Route::resource('/marques', 'MarqueController');
-=======
->>>>>>> e7e904e8b6febc7acab03b94f642067432c2b598

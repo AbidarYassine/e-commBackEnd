@@ -27,7 +27,7 @@ class CategorieServiceImpl implements \App\Service\CategorieService
         $categorie=$this->findById($categorie);
         return $categorie->delete();
     }
-
+/// ????
     public function updateCategorie($categorie){
         return Categorie::whereId($categorie->id)->update($categorie->all());
 

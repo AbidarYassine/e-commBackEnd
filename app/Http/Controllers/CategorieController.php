@@ -5,20 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Categorie;
+use App\Http\Resources\CategorieResource;
 use App\Models\Categorie as ModelsCategorie;
 use App\Service\CategorieService;
 use Validator;
 
-class CategorieController extends BaseController
+class CategorieController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return CategorieResource
      */
     public function index(CategorieService $categorieService)
     {
-       return $categorieService->getAllCategories();
+    
+       return CategorieResource::collection($categorieService->getAllCategories());
 
         //return view('categorie.index', ['categories'->$categorie]);
     }
@@ -42,9 +44,10 @@ class CategorieController extends BaseController
     public function store(Request $request,CategorieService $categorieService)
     {
         $categorie = [
-            "lib"=>$request->lib,
+            "libelle"=>$request->lib,
         ];
-        $categorieService->save($categorie);
+        
+        return new CategorieResource($categorieService->save($categorie));
     
         //$categorie->Date= $request->input('');
 
@@ -64,22 +67,13 @@ class CategorieController extends BaseController
             return $this->sendEror('categorie not found');
         }
 
-        return $this->sendResponse($categorie->toArray(), 'categorie creted succefully');
+        return new CategorieResource($categorie);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $categorie = ModelsCategorie::find($id);
-
-        return view('Categorie.edit', ['categorie' => $categorie]);
-    }
-
+     *
     /**
      * Update the specified resource in storage.
      *

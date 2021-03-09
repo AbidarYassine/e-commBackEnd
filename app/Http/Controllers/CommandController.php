@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Http\Resources\CommandRessource;
+use App\Service\CommandService;
+use App\Service\FactureService;
+
+
 use App\Models\Command;
 use Illuminate\Http\Request;
 
@@ -12,30 +18,33 @@ class CommandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(CommandService $commandService)
     {
-        //
+        return CommandResource::collection($commandeService->getAllFacture());
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     
+   
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, CommandService $commandService)
     {
-        //
+        
+        $command = [
+            "cmdDate" => $request->cmdDate,
+            "toatlcmd" => $request->toatlcmd,
+            "cmdDescription" => $request->cmdDescription,
+            "etat_command_id" => $request->etat_command_id,
+            "user_id" => $request->user_id,
+           
+        ];
+        return new CommandRessource($CommandService->save($command));
+
     }
 
     /**
@@ -44,9 +53,9 @@ class CommandController extends Controller
      * @param  \App\Models\Command  $command
      * @return \Illuminate\Http\Response
      */
-    public function show(Command $command)
+    public function show($command , CommandService $commandService)
     {
-        //
+        return new CommandRessource($commandService->findById($command));
     }
 
     /**
@@ -55,10 +64,7 @@ class CommandController extends Controller
      * @param  \App\Models\Command  $command
      * @return \Illuminate\Http\Response
      */
-    public function edit(Command $command)
-    {
-        //
-    }
+    
 
     /**
      * Update the specified resource in storage.
@@ -67,9 +73,10 @@ class CommandController extends Controller
      * @param  \App\Models\Command  $command
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Command $command)
+    public function update(Request $request, CommandService $commandService)
     {
-        //
+        return $commandService->updateCommand($request);
+
     }
 
     /**
@@ -78,8 +85,9 @@ class CommandController extends Controller
      * @param  \App\Models\Command  $command
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Command $command)
+    public function destroy($command , CommandService $commandService)
     {
-        //
+        return $commandService->deleteCommand($command);
+
     }
 }

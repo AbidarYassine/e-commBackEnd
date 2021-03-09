@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Resources\ProprieteRessource;
+use App\Models\Propriete;
+use App\Service\ProprieteService;
 use Illuminate\Http\Request;
 
 class ProprieteController extends BaseController
@@ -11,11 +13,10 @@ class ProprieteController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ProprieteService $proprieteService)
     {
-        $proriete = proriete::all();
+        return ProprieteRessource::collection($proprieteService->getAllPropriete());
 
-        return view('Proriete.index',['prorietes'->$categorie]);
     }
 
     /**
@@ -34,12 +35,16 @@ class ProprieteController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request , ProprieteService $proprieteService)
     {
-        $proriete = new Proriete();
+        $proriete = [
+            "lib" => $request->lib,
+            "propvaleur" => $request->propvaleur,
+        
+        ];
+        return new ProprieteRessource($proprieteService->save($proriete));
 
-        $proriete->lib= $request->input('proriete');
-        $proriete->save();
+       
     }
 
     /**
@@ -48,29 +53,16 @@ class ProprieteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, ProprieteService $proprieteService)
     {
-        $proriete = Proriete::find($id);
+        return new ProprieteRessource($proprieteService->findById($propriete));
 
-        if (is_null($proriete)) {
-          return $this-> sendEror('proriete not found')
-        }
-
-        return $this-> sendResponse($proriete->toArray(),'proriete creted succefully');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $proriete = Proriete::find($id);
-
-        return view('Proriete.edit', ['proriete'=> $proriete]);
-    }
+     *
 
     /**
      * Update the specified resource in storage.
@@ -79,14 +71,10 @@ class ProprieteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,ProprieteService $proprieteService)
     {
-        $proriete = Proriete::find($id);
-        $proriete->lib= $request->input('proplib');
-        $proriete->valeur= $request->input('propvaleur');
-        $proriete->save();
+        return $proprieteService->updatePropriete($request);
 
-        return redirect('proriete');
     }
 
     /**
@@ -95,10 +83,9 @@ class ProprieteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($propriete , ProprieteService $proprieteService)
     {
-        $proriete->delete();
- 
-        return $this-> sendResponse($proriete->toArray(),'proriete deleted succefully');
+        return $proprieteService->deletePropriete($propriete);
+
     }
 }

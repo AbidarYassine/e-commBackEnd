@@ -2,44 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Marque;
+use App\Http\Resources\MarqueResource;
+//use App\Models\Marque as ModelsMarque;
+use App\Service\MarqueService;
+
 use Illuminate\Http\Request;
 
-class MarqueController extends BaseController
+class MarqueController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(MarqueService $marqueService)
     {
-        $marque = marque::all();
+        return MarqueResource::collection($MarqueService->getAllMarques());
 
-        return view('Marque.index',['$marque'->$categorie]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
-     */
-    // public function create()
-    // {
-    //     return view('Marque.create');
-    // }
+     *
 
     /**
-     * Store a newly created resource in storage.
+   
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request , MarqueService $marqueService)
     {
-        $marque = new Marque();
-
-        $marque->lib= $request->input('marqlib');
-        $marque->save();
+        $marque = [
+            "libelle"=>$request->marqlib,
+        ];
+        
+        return new MarqueResource($MarqueService->save($marque));
+    
     }
 
     /**
@@ -48,29 +49,15 @@ class MarqueController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id , MarqueService $marqueService)
     {
-        $marque = marque::find($id);
+        return new MarqueRessource($MarqueService->findById($marque));
 
-          if (is_null($marque)) {
-            return $this-> sendEror('marque not found')
-          }
-
-          return $this-> sendResponse($marque->toArray(),'marque creted succefully');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $marque = marque::find($id);
-
-        return view('Marque.edit', ['marque'=> $marque]);
-    }
 
     /**
      * Update the specified resource in storage.
@@ -78,14 +65,11 @@ class MarqueController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     *  @return MarqueResource
      */
-    public function update(Request $request, $id)
+    public function update(Request $request , MarqueService $marqueService)
     {
-        $marque = Marque::find($id);
-        $marque->lib= $request->input('marqlib');
-        $marque->save();
-
-        return redirect('marques');
+        return $marqueService->updateMarques($request);
     }
 
     /**
@@ -94,10 +78,15 @@ class MarqueController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id,  MarqueService $marqueService)
     {
-        $marque->delete();
- 
-        return $this-> sendResponse($marque->toArray(),'marque deleted succefully');
+        return $factureService->deleteFacture($id);
     }
+
+    public function findByMarque($idMarque,  MarqueService $marqueService)
+    {
+        return new MarqueResource($marqueService->findByIdMarque($idMarque));
+    }
+}
+
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class ArticleController extends BaseController
+class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +13,7 @@ class ArticleController extends BaseController
      */
     public function index()
     {
-        $article = article::all(); // models khshom ibdaw b Majuscule
+        $article = Article::all(); // models khshom ibdaw b Majuscule
 
         return view('Article.index',['articles'->article]);
     }

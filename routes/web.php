@@ -19,5 +19,5 @@ Route::get('/', function () {
 
 
 
-
+##Route::resource('/categories',[CategorieController::class]);
 

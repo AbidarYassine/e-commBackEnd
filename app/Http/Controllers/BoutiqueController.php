@@ -8,7 +8,7 @@ use App\Service\BoutiqueService;
 use App\Service\FactureService;
 use Illuminate\Http\Request;
 
-class BoutiqueController extends BaseController
+class BoutiqueController extends Controller
 {
 //    protected $user;
 //
