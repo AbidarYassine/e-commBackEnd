@@ -81,4 +81,10 @@ Route::group(['prefix' => 'remarques'], function () {
     Route::delete("/id/{id}", [Controllers\RemarqueController::class, 'destroy']);
     Route::put("/update/{id}", [Controllers\RemarqueController::class, 'update']);
 });
-
+Route::group(['prefix' => 'boutiques'], function () {
+    Route::get("/", [Controllers\BoutiqueController::class, 'index']);
+    Route::post("/", [Controllers\BoutiqueController::class, 'store']);
+    Route::get("/id/{id}", [Controllers\BoutiqueController::class, 'show']);
+    Route::delete("/id/{id}", [Controllers\BoutiqueController::class, 'destroy']);
+    Route::put("/update/{id}", [Controllers\BoutiqueController::class, 'update']);
+});

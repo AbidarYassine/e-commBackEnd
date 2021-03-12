@@ -4,7 +4,9 @@
 namespace App\Service\ServiceImpl;
 
 
+use App\Exceptions\Boutique\BoutiqueNotFoundException;
 use App\Models\Boutique;
+use function PHPUnit\Framework\isNull;
 
 class BoutiqueServiceImpl implements \App\Service\BoutiqueService
 {
@@ -21,7 +23,11 @@ class BoutiqueServiceImpl implements \App\Service\BoutiqueService
 
     public function findById($id)
     {
-        return Boutique::findOrFail($id);
+        $boutique = Boutique::find($id);
+        if (is_null($boutique)) {
+            throw new BoutiqueNotFoundException('Boutique not found by ID ' . $id, 422);
+        }
+        return $boutique;
     }
 
     public function deleteBoutique($boutiqueId)
@@ -32,6 +38,10 @@ class BoutiqueServiceImpl implements \App\Service\BoutiqueService
 
     public function updateBoutique($boutique)
     {
-        return Boutique::whereId($boutique->id)->update($boutique->all());
+        $updated = Boutique::whereId($boutique->id)->update($boutique->all());
+        if ($updated == 0) {
+            throw new BoutiqueNotFoundException('Boutique not found by ID ' . $boutique->id, 404);
+        }
+        return $boutique->all();
     }
 }

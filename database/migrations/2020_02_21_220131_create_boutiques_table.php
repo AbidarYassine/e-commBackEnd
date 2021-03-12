@@ -13,7 +13,6 @@ class CreateBoutiquesTable extends Migration
      */
     public function up()
     {
-//        protected $fillable = ['id', 'boutLib', 'botAdresse', 'boutTel', 'boutFax', 'boutMail', 'boutDescription'];
         Schema::create('boutiques', function (Blueprint $table) {
             $table->id();
             $table->string("boutLib", 50);
@@ -21,7 +20,7 @@ class CreateBoutiquesTable extends Migration
             $table->string("boutTel", 15);
             $table->string("boutFax", 15);
             $table->string("boutMail", 50);
-            $table->string("boutDescription", 200);
+            $table->string("boutDescription", 200)->nullable(true);
             $table->timestamps();
         });
     }
