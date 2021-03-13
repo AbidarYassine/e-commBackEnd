@@ -4,6 +4,8 @@
 namespace App\Service\ServiceImpl;
 
 
+use App\Exceptions\Privilege\PrivilegeAlreadyExistException;
+use App\Exceptions\Privilege\PrivilegeNotFoundException;
 use App\Models\Privilege;
 use App\Service\PrivillegeService;
 use Illuminate\Support\Facades\DB;
@@ -18,12 +20,22 @@ class PrivillegeServiceImpl implements PrivillegeService
 
     public function save($privillege)
     {
-        return Privilege::create($privillege);
+//        dd($privillege["privLib"]);
+        if ($this->findByLibelle($privillege["privLib"], false) == null) {
+            return Privilege::create($privillege);
+        } else {
+            throw new PrivilegeAlreadyExistException("Privilege " . strtoupper($privillege["privLib"]) . " Already exist !!");
+        }
+
     }
 
     public function findById($id)
     {
-        return Privilege::findOrFail($id);
+        $privilege = Privilege::find($id);
+        if (is_null($privilege)) {
+            throw new PrivilegeNotFoundException('Privilege not found by ID ' . $id, 422);
+        }
+        return $privilege;
     }
 
     public function deletePrivillege($idPrivillege)
@@ -34,11 +46,21 @@ class PrivillegeServiceImpl implements PrivillegeService
 
     public function updatePrivillege($privillege)
     {
-        return Privilege::whereId($privillege->id)->update($privillege->all());
+        $privilege = Privilege::whereId($privillege->id)->update($privillege->all());
+        if ($privilege === 0) {
+            throw new PrivilegeNotFoundException("Privilege not found by " . $privillege->id);
+        }
+        return $privilege;
     }
 
-    public function findByLibelle($libelle)
+    public function findByLibelle($libelle, bool $throwExcption)
     {
-        return DB::table('privileges')->where('privLib', strtoupper($libelle))->first();
+        $result = DB::table('privileges')->where('privLib', strtoupper($libelle))->first();
+        if ($result == null) {
+            if ($throwExcption) {
+                throw new PrivilegeNotFoundException('Privilege not found by libelle ' . strtoupper($libelle), 404);
+            }
+        }
+        return $result;
     }
 }

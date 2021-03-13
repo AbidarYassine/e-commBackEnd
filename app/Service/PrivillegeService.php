@@ -19,5 +19,5 @@ interface PrivillegeService
 
     public function updatePrivillege($privillege);
 
-    public function findByLibelle($libelle);
+    public function findByLibelle($libelle,bool $throwExcption);
 }

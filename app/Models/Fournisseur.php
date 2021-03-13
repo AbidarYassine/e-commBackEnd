@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Fournisseur extends Model
 {
     use HasFactory;
-    protected $fillable = ['id', 'fourmail', 'fourtel','fourfax', 'fouradresse', 'fourdescription'];
 
-    public function article()
+    protected $fillable = ['id', 'fourmail', 'fourtel', 'fourfax', 'fouradresse', 'fourdescription'];
+
+    public function articles()
     {
         return $this->hasMany(Article::class);
     }
-}
 }

@@ -2,21 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LivraisonRessource;
 use App\Models\Livraison;
 use App\Service\LivraisonService;
 use App\Service\ServiceImpl\LivraisonImpl;
+use App\Traits\GeneralTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LivraisonController extends Controller
 {
+    use GeneralTrait;
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param LivraisonService $livraisonService
+     * @return JsonResponse
      */
-    public function index(LivraisonService $livraisonService)
+    public function index(LivraisonService $livraisonService): JsonResponse
     {
-        return $livraisonService->getAllLivraison();
+        try {
+            $data = $livraisonService->getAllLivraison();
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(LivraisonRessource::collection($data), 200);
     }
 
     /**
