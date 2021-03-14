@@ -21,7 +21,7 @@ class LivraisonRessource extends JsonResource
             'livdescription' => $this->livdescription,
             'command' => $this->command,
             'boutique' => $this->boutique,
-            'mode_livraison' => $this->modelivraison,
+            'mode_livraison' => $this->modeLivraison,
         ];
     }
 }

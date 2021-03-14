@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Modelivraison;
 use App\Service\ModeLivraisonService;
+use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 
 class ModelivraisonController extends Controller
 {
+    use GeneralTrait;
+
+    // TODO modified to bettre
+
     /**
      * Display a listing of the resource.
      *

@@ -4,8 +4,13 @@
 namespace App\Service\ServiceImpl;
 
 
+use App\Exceptions\Boutique\BoutiqueNotFoundException;
+use App\Exceptions\Livraison\LivraisonAlreadyCreatedException;
+use App\Exceptions\Livraison\LivraisonNotFoundException;
 use App\Models\Boutique;
 use App\Models\Livraison;
+use App\Service\BoutiqueService;
+use Illuminate\Support\Facades\DB;
 
 class LivraisonImpl implements \App\Service\LivraisonService
 {
@@ -15,14 +20,24 @@ class LivraisonImpl implements \App\Service\LivraisonService
         return Livraison::all();
     }
 
-    public function save($dateLivraison)
+    public function save($dataLivraison)
     {
-        return Livraison::create($dateLivraison);
+        $liv = DB::table('livraisons')->where('command_id', '=', $dataLivraison["command_id"])->first();
+        if ($liv == null) {
+            return Livraison::create($dataLivraison);
+        } else {
+            throw new LivraisonAlreadyCreatedException("Livraison with command numero " . $dataLivraison["command_id"] . " Already Created");
+        }
+
     }
 
     public function findById($id)
     {
-        return Livraison::findOrFail($id);
+        $liv = Livraison::find($id);
+        if (is_null($liv)) {
+            throw new LivraisonNotFoundException("Livraison not found by id " . $id);
+        }
+        return $liv;
     }
 
     public function deleteLivraison($idLiv)
@@ -36,9 +51,12 @@ class LivraisonImpl implements \App\Service\LivraisonService
         return Livraison::whereId($livraison->id)->update($livraison->all());
     }
 
-    public function getALLivraisonByBoutique($boutique)
+    public function getALLivraisonByBoutique($id)
     {
-        $boutique = Boutique::findOrFail($boutique);
+        $boutique = Boutique::find($id);
+        if (is_null($boutique)) {
+            throw new BoutiqueNotFoundException("Boutique not found by id " . $id);
+        }
         return $boutique->livraisons;
     }
 }

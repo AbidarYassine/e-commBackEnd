@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Boutique\BoutiqueNotFoundException;
+use App\Exceptions\Facture\FactureAlreadyExistException;
+use App\Exceptions\Livraison\LivraisonAlreadyCreatedException;
+use App\Exceptions\Livraison\LivraisonNotFoundException;
+use App\Http\Requests\LivraisonRequest;
 use App\Http\Resources\LivraisonRessource;
 use App\Models\Livraison;
 use App\Service\LivraisonService;
@@ -33,80 +38,96 @@ class LivraisonController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param LivraisonRequest $request
+     * @param LivraisonService $livraisonService
+     * @return JsonResponse
      */
-    public function store(Request $request, LivraisonService $livraisonService)
+    public function store(LivraisonRequest $request, LivraisonService $livraisonService)
     {
-        $livraison = [
-            "livdate" => $request->livdate,
-            "livdescription" => $request->livdescription,
-            "command_id" => $request->command_id,
-            "modeliv_id" => $request->modeliv_id,
-            "boutique_id" => $request->boutique_id,
-        ];
-        return $livraisonService->save($livraison);
+        try {
+            $livraison = [
+                "livdate" => $request->livdate,
+                "livdescription" => $request->livdescription,
+                "command_id" => $request->command_id,
+                "modeliv_id" => $request->modeliv_id,
+                "boutique_id" => $request->boutique_id,
+            ];
+            $factureSaved = $livraisonService->save($livraison);
+        } catch (LivraisonAlreadyCreatedException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(new LivraisonRessource($factureSaved), '201');
+
     }
 
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Livraison $livraison
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @param LivraisonService $livraisonService
+     * @return JsonResponse
      */
-    public function show($livraison, LivraisonService $livraisonService)
+    public function show($id, LivraisonService $livraisonService): JsonResponse
     {
-        return $livraisonService->findById($livraison);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Livraison $livraison
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Livraison $livraison)
-    {
-        //
+        try {
+            $facture = $livraisonService->findById($id);
+        } catch (LivraisonNotFoundException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(new LivraisonRessource($facture), '200');
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Livraison $livraison
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Livraison $livraison
+     * @return JsonResponse
      */
     public function update(Request $request, LivraisonService $livraisonService)
     {
-        return $livraisonService->updateLivraison($request);
+        try {
+            $livraisonService->updateLivraison($request);
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnSuccessMessage('Successfully update Livraison', 202);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Livraison $livraison
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @param LivraisonService $livraisonService
+     * @return JsonResponse
      */
-    public function destroy($livraison, LivraisonService $livraisonService)
+    public function destroy($id, LivraisonService $livraisonService): JsonResponse
     {
-        return $livraisonService->deleteLivraison($livraison);
+        try {
+            $livraisonService->deleteLivraison($id);
+        } catch (LivraisonNotFoundException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnSuccessMessage('Successfully delete Livraison ', 204);
     }
 
-    public function getALLivraisonByBoutique($boutique, LivraisonService $livraisonService)
+    public function getALLivraisonByBoutique($id, LivraisonService $livraisonService)
     {
-        return $livraisonService->getALLivraisonByBoutique($boutique);
+        try {
+            $data = $livraisonService->getALLivraisonByBoutique($id);
+        } catch (BoutiqueNotFoundException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        }
+        return $this->returnData(LivraisonRessource::collection($data), 200);
     }
 }

@@ -13,7 +13,6 @@ class CreateModelivraisonsTable extends Migration
      */
     public function up()
     {
-        ['id', 'modlivLib', 'modelibDesc'];
         Schema::create('modelivraisons', function (Blueprint $table) {
             $table->id();
             $table->string('modlivLib', 50);

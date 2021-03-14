@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Livraison extends Model
 {
+    protected $table = "livraisons";
     use HasFactory;
 
     protected $fillable = [
@@ -22,10 +23,10 @@ class Livraison extends Model
     {
         return $this->belongsTo(Command::class);
     }
- 
-    public function modelivraison()
+
+    public function modeLivraison()
     {
-        return $this->belongsTo(Modelivraison::class);
+        return $this->belongsTo(Modelivraison::class, 'modeliv_id', 'id');
     }
 
     public function boutique()
