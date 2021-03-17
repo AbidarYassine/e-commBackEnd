@@ -4,12 +4,12 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MarqueRessource extends JsonResource
+class MarqueResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function toArray($request)
@@ -17,7 +17,6 @@ class MarqueRessource extends JsonResource
         return [
             'id'                  => $this->id,
             'marqueLibelle'     => $this->marqlib,
-
         ];
     }
 }

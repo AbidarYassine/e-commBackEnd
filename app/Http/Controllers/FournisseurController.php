@@ -1,22 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\FournisseurService;
+use App\Http\Resources\FournisseurResource;
+use App\Models\Fournisseur;
+use App\Service\ServiceImpl\FournisseurServiceImpl;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Validator;
+
 
 class FournisseurController extends BaseController
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource.s
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(FournisseurServiceImpl $fournisseurService) : JsonResponse
     {
-        $fournisseur = fournisseur::all();
+        return $this->returnData(FournisseurResource::collection($fournisseurService->getAllFournisseurs()), '200');
 
-        return $this->sendResponse($fornisseur->toArray(),'fournisseur read succesuflly');
     }
 
     /**
@@ -36,17 +39,28 @@ class FournisseurController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request , FournisseurService $fournisseurService)
     {
-        $fournisseur = new Fournisseur();
+        try {
+            $fournisseur = [
 
-        $fournisseur->Email= $request->input('fourmail');
-        $fournisseur->telephone= $request->input('fourtel');
-        $fournisseur->Fax= $request->input('fourfax');
-        $fournisseur->Adresse= $request->input('fouradresse');
-        $fournisseur->descriptions= $request->input('fourdescription');
+                "fourmail"=>$request->fourmail,
+                "fourtel"=>$request->fourtel,
+                "fourfax"=>$request->fourfax,
+                "fouradresse"=>$request->fouradresse,
+                "fourdescription"=>$request->fourdescription,
+            ];
 
-        $fournisseur->save();
+            $fournisseurSaved = $fournisseurService->save($fournisseur);
+
+        }
+        catch (FournisseurAlreadyExistException | \Exception $ex) {
+     return response()->json(["error" => $ex->getMessage()], 422);
+   } catch (\Error $er) {
+    return response()->json(["error" => $er->getMessage()], 422);
+}
+        return $this->returnData(new FactureResource($fournisseurSaved), '201');
+
     }
 
     /**
@@ -55,31 +69,24 @@ class FournisseurController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id , FournisseurService $fournisseurService)
     {
-        
-        $fournisseur = Fournisseur::find($id);
+        try {
+            $fournisseur = $fournisseurService->findById($id);
 
-        if (is_null($fournisseur)) {
-          return $this-> sendEror('fournisseur not found')
         }
-
-        return $this-> sendResponse($fournisseur->toArray(),'fournisseur creted succefully');
+        catch (FournisseurNotFoundException $ex) {
+        return response()->json(["error" => $ex->getMessage()], 422);
     }
+        return $this->returnData(new FournisseurResource($fournisseur), '200');
+
+    }
+
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $fournisseur = fournisseur::find($id);
-
-        return view('Fournisseur.edit', ['fournisseur'=> $fournisseur]);
-    }
-
+     *
     /**
      * Update the specified resource in storage.
      *
@@ -87,29 +94,43 @@ class FournisseurController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request , FournisseurService $fournisseurService)
     {
-        $fournisseur = Fournisseur::find($id);
-        $fournisseur->Email= $request->input('fourmail');
-        $fournisseur->telephone= $request->input('fourtel');
-        $fournisseur->Fax= $request->input('fourfax');
-        $fournisseur->Adresse= $request->input('fouradresse');
-        $fournisseur->descriptions= $request->input('fourdescription');
-        $fournisseur->save();
+        try {
+             $fournisseurService->updateFournisseurs($request);
 
-        return redirect('fournisseurs');
+        }
+
+    catch (FournisseurNotFoundException | \Exception $ex) {
+        return response()->json(["error" => $ex->getMessage()], 422);
+    } catch (\Error $er) {
+        return response()->json(["error" => $er->getMessage()], 422);
+    }
+        return $this->returnSuccessMessage('Successfully update Fournisseur', 202);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource frosm storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id,  FournisseurService $fournisseurService)
     {
-        $fournisseur->delete();
- 
-        return $this-> sendResponse($fournisseur->toArray(),'fournisseur deleted succefully');
+        try {
+            $fournisseurService->deleteFournisseur($id);
+
+        }
+
+    catch (FournisseurNotFoundException $ex) {
+        return response()->json(["error" => $ex->getMessage()], 404);
+    }
+        return $this->returnSuccessMessage('Successfully delete Fournisseur ', 204);
+    }
+
+    public function findByFournisseur($idFournisseur,  FournisseurService $fournisseurService)
+    {
+        return new FournisseurResource($fournisseurService->findByIdFournisseur($idFournisseur));
     }
 }
+

@@ -6,7 +6,7 @@ namespace App\Service;
 
 interface ArticleService
 {
-    public function getAllArticle();
+    public function getAllArticles();
 
     public function save($article);
 
@@ -15,5 +15,5 @@ interface ArticleService
 
     public function deleteArticle($article);
 
-    public function updatArticle($article);
+    public function updateArticle($article);
 }

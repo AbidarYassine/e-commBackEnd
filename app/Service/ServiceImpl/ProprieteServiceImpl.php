@@ -11,6 +11,7 @@ class ProprieteServiceImpl implements \App\Service\ProprieteService
 {
   
     public function getAllProprietes(){
+        dd("1");
         return Propriete::all();
     }
 

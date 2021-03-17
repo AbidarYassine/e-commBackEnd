@@ -7,6 +7,7 @@ use App\Http\Resources\MarqueResource;
 //use App\Models\Marque as ModelsMarque;
 use App\Service\MarqueService;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MarqueController extends Controller
@@ -18,7 +19,7 @@ class MarqueController extends Controller
      */
     public function index(MarqueService $marqueService)
     {
-        return MarqueResource::collection($MarqueService->getAllMarques());
+        return MarqueResource::collection($marqueService->getAllMarques());
 
     }
 
@@ -28,19 +29,30 @@ class MarqueController extends Controller
      *
 
     /**
-   
+
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request , MarqueService $marqueService)
     {
-        $marque = [
-            "libelle"=>$request->marqlib,
-        ];
-        
-        return new MarqueResource($MarqueService->save($marque));
-    
+        try {
+            $marque = [
+                "libelle"=>$request->marqlib,
+            ];
+            return new MarqueResource($marqueService->save($marque));
+
+        }
+
+
+
+        catch (MarqueAlreadyExistException | \Exception $ex) {
+        return response()->json(["error" => $ex->getMessage()], 422);
+    } catch (\Error $er) {
+        return response()->json(["error" => $er->getMessage()], 422);
+    }
+        return $this->returnData(new MarqueResource($marqueSaved), '201');
+
     }
 
     /**
@@ -49,9 +61,15 @@ class MarqueController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id , MarqueService $marqueService)
+    public function show($id , MarqueService $marqueService): JsonResponse
     {
-        return new MarqueRessource($MarqueService->findById($marque));
+        try {
+            $marque= $marqueService->findById($id);
+        }
+catch (FactureNotFoundException $ex) {
+        return response()->json(["error" => $ex->getMessage()], 422);
+    }
+        return $this->returnData(new MarqueResource($marque), '200');
 
     }
 
@@ -69,7 +87,15 @@ class MarqueController extends Controller
      */
     public function update(Request $request , MarqueService $marqueService)
     {
-        return $marqueService->updateMarques($request);
+        try {
+            $marqueService->updateMarque($request);
+        }
+        catch (MarqueNotFoundException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnSuccessMessage('Successfully update Marque', 202);
     }
 
     /**
@@ -80,7 +106,15 @@ class MarqueController extends Controller
      */
     public function destroy($id,  MarqueService $marqueService)
     {
-        return $factureService->deleteFacture($id);
+        try {
+            $marqueService->deleteMarque($id);
+
+        }
+
+    catch (MarqueNotFoundException $ex) {
+        return response()->json(["error" => $ex->getMessage()], 404);
+    }
+        return $this->returnSuccessMessage('Successfully delete Marque ', 204);
     }
 
     public function findByMarque($idMarque,  MarqueService $marqueService)
@@ -89,4 +123,4 @@ class MarqueController extends Controller
     }
 }
 
-}
+

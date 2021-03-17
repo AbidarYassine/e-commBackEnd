@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Facture\FactureAlreadyExistException;
+use App\Exceptions\Facture\FactureNotFoundException;
+use App\Http\Resources\ArticleResource;
+use App\Http\Resources\FactureResource;
+use App\Service\ArticleService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -11,11 +17,12 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ArticleService $ArticleService): JsonResponse
     {
-        $article = Article::all(); // models khshom ibdaw b Majuscule
 
-        return view('Article.index',['articles'->article]);
+       return returnData(ArticleResource::collection($ArticleService->getAllArticles()), '200');
+
+
     }
 
     /**
@@ -34,38 +41,44 @@ class ArticleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request,ArticleService $ArticleService): JsonResponse
     {
-        $article = new Article();
+        $article = [
+            "libelle" => $request->lib,
+        ];
 
-        $article->designation= $request->input('ertdesignation');
-        $article->prix= $request->input('prix');
-        $article->quantite= $request->input('qtestock');
-        $article->TVA= $request->input('tauttva');
-        $article->Remise= $request->input('tautremise');
-        $article->artimg= $request->input('artimg');
-        $article->description= $request->input('artdescription');
-        $article->marque= $request->input('marque_id');
-        $article->categorie= $request->input('category_id');
-
-        $article->save();
+    try{
+    $articleSaved = $ArticleService->save($article);
+    }
+    catch (ArticleNotFoundException  | \Exception $ex) {
+        return response()->json(["error" => $ex->getMessage()], 422);
+    } catch (\Error $er) {
+        return response()->json(["error" => $er->getMessage()], 422);
     }
 
+
+        return $this->returnData(new ArticleResource($articleSaved), '201');
+
+
+    }
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id,ArticleService $ArticleService): JsonResponse
     {
-        $article = Article::find($id);
 
-        if (is_null($article)) {
-          return $this-> sendEror('article not found')
+
+        try {
+            $article = $ArticleService->findById($id);
+        } catch (FactureNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
         }
+        return $this->returnData(new ArticleResource($article), '200');
 
-        return $this-> sendResponse($categorie->toArray(),'article creted succefully');
+
     }
 
     /**
@@ -74,12 +87,6 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        $article = Article::find($id);
-
-        return view('Article.edit', ['article'=> $article]);
-    }
 
     /**
      * Update the specified resource in storage.
@@ -88,13 +95,9 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id,ArticleService $ArticleService): JsonResponse
     {
-        $article = Article::find($id);
-        $article->lib= $request->input('catlib');
-        $article->save();
-
-        return redirect('articles');
+        return $ArticleService->updateArticle($request);
     }
 
     /**
@@ -103,10 +106,16 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id,ArticleService $ArticleService): JsonResponse
     {
-        $article->delete();
- 
-        return $this-> sendResponse($article->toArray(),'article deleted succefully');
+
+        try {
+            $ArticleService->deleteArticle($id);
+        } catch (ArticleNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 404);
+        }
+        return $this->returnSuccessMessage('Successfully delete article', 204);
     }
+
+
 }

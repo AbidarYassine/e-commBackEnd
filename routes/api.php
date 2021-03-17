@@ -73,6 +73,28 @@ Route::group(['prefix' => 'privileges'], function () {
     Route::get("/libelle/{libelle}", [Controllers\PrivilegeController::class, 'findByLibelle']);
     Route::delete("/id/{id}", [Controllers\PrivilegeController::class, 'destroy']);
     Route::put("/update/{id}", [Controllers\PrivilegeController::class, 'update']);
-
-
 });
+
+Route::group(['prefix' => 'remarques'], function () {
+    Route::get("/", [Controllers\RemarqueController::class, 'index']);
+    Route::post("/", [Controllers\RemarqueController::class, 'store']);
+    Route::get("/id/{id}", [Controllers\RemarqueController::class, 'show']);
+    Route::delete("/id/{id}", [Controllers\RemarqueController::class, 'destroy']);
+    Route::put("/update/{id}", [Controllers\RemarqueController::class, 'update']);
+});
+Route::group(['prefix' => 'proprietes'], function () {
+    Route::get("/", [Controllers\ProprieteController::class, 'index']);
+    Route::post("/", [Controllers\ProprieteController::class, 'store']);
+    Route::get("/id/{id}", [Controllers\ProprieteController::class, 'show']);
+    Route::delete("/id/{id}", [Controllers\ProprieteController::class, 'destroy']);
+    Route::put("/update/{id}", [Controllers\ProprieteController::class, 'update']);
+});
+Route::group(['prefix' => 'categories'], function () {
+    Route::get("/", [Controllers\CategorieController::class, 'index']);
+    Route::post("/", [Controllers\CategorieController::class, 'store']);
+    Route::get("/id/{id}", [Controllers\CategorieController::class, 'show']);
+    Route::delete("/id/{id}", [Controllers\CategorieController::class, 'destroy']);
+    Route::put("/update/{id}", [Controllers\CategorieController::class, 'update']);
+});
+
+

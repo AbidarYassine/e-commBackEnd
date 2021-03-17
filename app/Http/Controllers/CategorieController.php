@@ -2,27 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Categorie\CategorieNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 use App\Categorie;
 use App\Http\Resources\CategorieResource;
 use App\Models\Categorie as ModelsCategorie;
 use App\Service\CategorieService;
+use App\Traits\GeneralTrait;
 use Validator;
 
 class CategorieController extends Controller
 {
+    use GeneralTrait;
+
     /**
      * Display a listing of the resource.
      *
-     * @return CategorieResource
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(CategorieService $categorieService)
+    public function index(CategorieService $categorieService): JsonResponse
     {
-    
-       return CategorieResource::collection($categorieService->getAllCategories());
 
-        //return view('categorie.index', ['categories'->$categorie]);
+        return returnData(CategorieResource::collection($categorieService->getAllCategories()), '200');
+
     }
 
     /**
@@ -38,17 +42,24 @@ class CategorieController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request,CategorieService $categorieService)
+    public function store(Request $request, CategorieService $categorieService) : JsonResponse
     {
         $categorie = [
-            "libelle"=>$request->lib,
+            "catlib" => $request->lib
         ];
-        
-        return new CategorieResource($categorieService->save($categorie));
-    
+        try {
+            $catSaved = $categorieService->save($categorie);
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(new CategorieResource($catSaved), '201');
+        //return new CategorieResource($catSaved);
+
         //$categorie->Date= $request->input('');
 
     }
@@ -56,44 +67,56 @@ class CategorieController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id,CategorieService $categorieService)
+    public function show($id, CategorieService $categorieService)
     {
-        $categorie = $categorieService->findById($id);
+        try {
+            $result = $categorieService->findById($id);
 
-        if (is_null($categorie)) {
-            return $this->sendEror('categorie not found');
+
+
+        } catch (CategorieNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
         }
-
-        return new CategorieResource($categorie);
+        return $this->returnData(new CategorieResource($result), '200');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      *
-    /**
+     * /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id,CategorieService $categorieService)
+    public function update(Request $request, CategorieService $categorieService)
     {
-        return $categorieService->updateCategorie($request);
+
+        try {
+            $categorieService->updateCategorie($request);
+        }
+        catch (CategorieNotFoundException  | \Exception $ex) {
+                return response()->json(["error" => $ex->getMessage()], 422);
+            } catch (\Error $er) {
+                return response()->json(["error" => $er->getMessage()], 422);
+            }
+
+        return $this->returnSuccessMessage('Successfully update Categorie', 202);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id,CategorieService $categorieService)
+    public function destroy($id, CategorieService $categorieService)
     {
-        $categorieService->deleteCategorie($id);
+       return  $categorieService->deleteCategorie($id);
     }
 }

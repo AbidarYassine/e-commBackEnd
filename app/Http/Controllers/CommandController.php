@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Resources\CommandRessource;
+use App\Http\Resources\CommandResource;
 use App\Service\CommandService;
 use App\Service\FactureService;
 
 
 use App\Models\Command;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CommandController extends Controller
@@ -18,59 +19,68 @@ class CommandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(CommandService $commandService)
+    public function index(CommandService $commandService) :JsonResponse
     {
-        return CommandResource::collection($commandeService->getAllFacture());
+        return $this->returnData(CommandResource::collection($commandService->getAllcommands()), '200');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     
-   
+
+
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, CommandService $commandService)
     {
-        
-        $command = [
-            "cmdDate" => $request->cmdDate,
-            "toatlcmd" => $request->toatlcmd,
-            "cmdDescription" => $request->cmdDescription,
-            "etat_command_id" => $request->etat_command_id,
-            "user_id" => $request->user_id,
-           
-        ];
-        return new CommandRessource($CommandService->save($command));
+        try {
+            $command = [
+                "cmdDate" => $request->cmdDate,
+                "toatlcmd" => $request->toatlcmd,
+                "cmdDescription" => $request->cmdDescription,
+                "etat_command_id" => $request->etat_command_id,
+                "user_id" => $request->user_id,
+                ];
+            $commandSaved = $CommandService->save($command));
+        }
+
+
+
+        catch (CommandAlreadyExistException | \Exception $ex) {
+       return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+    return response()->json(["error" => $er->getMessage()], 422);
+}
+        return $this->returnData(new Command($commandSaved), '201');
 
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Command  $command
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
     public function show($command , CommandService $commandService)
     {
-        return new CommandRessource($commandService->findById($command));
+        return new CommandResource($commandService->findById($command));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Command  $command
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
-    
+
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Command  $command
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, CommandService $commandService)
@@ -82,7 +92,7 @@ class CommandController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Command  $command
+     * @param \App\Models\Command $command
      * @return \Illuminate\Http\Response
      */
     public function destroy($command , CommandService $commandService)

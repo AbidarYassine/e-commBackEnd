@@ -10,7 +10,7 @@ use App\Models\Command;
 class CommandServiceImpl implements \App\Service\CommandService
 {
   
-    public function getAllCategories(){
+    public function getAllCommands(){
         return Command::all();
     }
 

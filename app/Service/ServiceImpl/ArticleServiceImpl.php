@@ -9,7 +9,7 @@ use App\Models\Article;
 class ArticleServiceImpl implements \App\Service\ArticleService
 {
 
-    public function getAllArticle()
+    public function getAllArticles()
     {
         return Article::all();
     }
@@ -24,10 +24,10 @@ class ArticleServiceImpl implements \App\Service\ArticleService
         return Article::findOrFail($id);
     }
 
-    public function deleteBoutique($articleId)
+    public function deleteArticle($article)
     {
-        $boutique = $this->findById($articleId);
-        return $boutique->delete();
+        $article = $this->findById($article);
+        return $article->delete();
     }
 
     public function updateArticle($article)

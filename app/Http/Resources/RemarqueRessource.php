@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FactureResource extends JsonResource
+class RemarqueRessource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,9 @@ class FactureResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'DateFacture' => $this->datefact,
-            'baseHt' => $this->baseht,
-            'tva' => $this->tva,
-            'remise' => $this->remise,
-            'totalHT' => $this->totalht,
-            'totalTTC' => $this->totalttc,
-            'command' => $this->command,
+            'title' => $this->title,
+            'description' => $this->description,
+            "user" => $this->user,
         ];
     }
 }

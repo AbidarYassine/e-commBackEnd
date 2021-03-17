@@ -15,4 +15,4 @@ class Fournisseur extends Model
         return $this->hasMany(Article::class);
     }
 }
-}
+

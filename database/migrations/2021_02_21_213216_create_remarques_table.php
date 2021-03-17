@@ -15,7 +15,7 @@ class CreateRemarquesTable extends Migration
     {
         Schema::create('remarques', function (Blueprint $table) {
             $table->id();
-            $table->string("title", 50);
+            $table->string("title", 50)->unique();
             $table->string("description");
             $table->bigInteger('user_id', false, true)->unsigned()->index();
             $table->foreign('user_id')

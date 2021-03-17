@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Resources\ProprieteRessource;
+use App\Http\Resources\ProprieteResource;
 use App\Models\Propriete;
 use App\Service\ProprieteService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProprieteController extends BaseController
@@ -13,9 +14,10 @@ class ProprieteController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(ProprieteService $proprieteService)
+    public function index(ProprieteService $proprieteService): JsonResponse
     {
-        return ProprieteRessource::collection($proprieteService->getAllPropriete());
+        //dd($proprieteService->getAllProprietes());
+        return $this->returnData(ProprieteResource::collection($proprieteService->getAllProprietes()), '200');
 
     }
 
@@ -35,16 +37,26 @@ class ProprieteController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request , ProprieteService $proprieteService)
+    public function store(Request $request , ProprieteService $proprieteService): JsonRespons
     {
-        $proriete = [
-            "lib" => $request->lib,
-            "propvaleur" => $request->propvaleur,
-        
-        ];
-        return new ProprieteRessource($proprieteService->save($proriete));
+        try {
+            $proriete = [
+                "lib" => $request->lib,
+                "propvaleur" => $request->propvaleur,
 
-       
+            ];
+            $proprieteSaved= $proprieteService->save($proriete);
+        }
+
+        catch (ProprieteAlreadyExistException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(new ProprieteResource($proprieteSaved), '201');
+
+
+
     }
 
     /**
@@ -55,7 +67,14 @@ class ProprieteController extends BaseController
      */
     public function show($id, ProprieteService $proprieteService)
     {
-        return new ProprieteRessource($proprieteService->findById($propriete));
+        try {
+            $propriete = $proprieteService->findById($id);
+
+        }
+        catch (ProprieteNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        }
+        return $this->returnData(new ProprieteResource(propriete), '200');
 
     }
 
@@ -73,7 +92,15 @@ class ProprieteController extends BaseController
      */
     public function update(Request $request,ProprieteService $proprieteService)
     {
-        return $proprieteService->updatePropriete($request);
+        try {
+            $proprieteService->updatePropriete($request);
+        }
+        catch (ProprieteNotFoundException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnSuccessMessage('Successfully update Propriete', 202);
 
     }
 
@@ -85,7 +112,14 @@ class ProprieteController extends BaseController
      */
     public function destroy($propriete , ProprieteService $proprieteService)
     {
-        return $proprieteService->deletePropriete($propriete);
-
+        try {
+            $proprieteService->deletePropriete($propriete);
+        }
+        catch (ProprieteNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 404);
+        }
+        return $this->returnSuccessMessage('Successfully delete Propriete', 204);
     }
+
+
 }

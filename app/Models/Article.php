@@ -40,11 +40,10 @@ class Article extends Model
 
     public function proprietes()
     {
-<<<<<<< HEAD
         return $this->belongsToMany(command::class);
-=======
+
         return $this->belongsToMany(Propriete::class);
->>>>>>> e7e904e8b6febc7acab03b94f642067432c2b598
+
     }
 
 }
