@@ -2,21 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Privilege\PrivilegeNotFoundException;
+use App\Http\Requests\PrivilegeRequest;
 use App\Http\Resources\PrivilegeRessource;
 use App\Models\Privilege;
 use App\Service\PrivillegeService;
+use App\Traits\GeneralTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PrivilegeController extends Controller
 {
+    use GeneralTrait;
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param PrivillegeService $privilService
+     * @return JsonResponse
      */
-    public function index(PrivillegeService $privilService)
+    public function index(PrivillegeService $privilService): JsonResponse
     {
-        return PrivilegeRessource::collection($privilService->getAllPrevillege());
+
+        try {
+            $data = $privilService->getAllPrevillege();
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(PrivilegeRessource::collection($data), 200);
     }
 
     /**
@@ -32,27 +47,46 @@ class PrivilegeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return PrivilegeRessource
+     * @param PrivilegeRequest $request
+     * @param PrivillegeService $privilService
+     * @return JsonResponse
      */
-    public function store(Request $request, PrivillegeService $privilService)
+    public function store(PrivilegeRequest $request, PrivillegeService $privilService)
     {
         $privillege = [
             "privLib" => strtoupper($request->privLib),
             "description" => $request->description,
         ];
-        return new PrivilegeRessource($privilService->save($privillege));
+        try {
+            $data = $privilService->save($privillege);
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(new PrivilegeRessource($data), '201');
+
     }
 
     /**
      * Display the specified resource.
      *
      * @param \App\Models\Privilege $privilege
-     * @return PrivilegeRessource
+     * @param PrivillegeService $privilService
+     * @return JsonResponse
      */
-    public function show($privilege, PrivillegeService $privilService)
+    public function show($id, PrivillegeService $privilService): JsonResponse
     {
-        return new PrivilegeRessource($privilService->findById($privilege));
+        try {
+            $result = $privilService->findById($id);
+        } catch (PrivilegeNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 404);
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(new PrivilegeRessource($result), '200');
     }
 
     /**
@@ -69,28 +103,52 @@ class PrivilegeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Privilege $privilege
-     * @return PrivilegeRessource
+     * @param Request $request
+     * @param PrivillegeService $privilService
+     * @return JsonResponse
      */
     public function update(Request $request, PrivillegeService $privilService)
     {
-        return $privilService->updatePrivillege($request);
+        try {
+            $privilService->updatePrivillege($request);
+        } catch (PrivilegeNotFoundException | \Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnSuccessMessage('Successfully update Privilege', 202);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Privilege $privilege
-     * @return PrivilegeRessource
+     * @param $id
+     * @param PrivillegeService $privilService
+     * @return JsonResponse
      */
-    public function destroy($privilege, PrivillegeService $privilService)
+    public function destroy($id, PrivillegeService $privilService): JsonResponse
     {
-        return $privilService->deletePrivillege($privilege);
+        try {
+            $privilService->deletePrivillege($id);
+        } catch (\Exception | PrivilegeNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnSuccessMessage('Successfully delete Privilege', 204);
     }
 
     public function findByLibelle($lib, PrivillegeService $privilService)
     {
-        return $privilService->findByLibelle($lib);
+        try {
+            $result = $privilService->findByLibelle($lib, true);
+        } catch (PrivilegeNotFoundException $ex) {
+            return response()->json(["error" => $ex->getMessage()], 404);
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(new PrivilegeRessource($result), '200');
     }
 }

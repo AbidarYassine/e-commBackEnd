@@ -17,5 +17,5 @@ interface LivraisonService
 
     public function updateLivraison($livraison);
 
-    public function getALLivraisonByBoutique($boutique);
+    public function getALLivraisonByBoutique($id);
 }

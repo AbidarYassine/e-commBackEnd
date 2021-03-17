@@ -15,12 +15,12 @@ class BoutiqueRessource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'                  => $this->id,
-            'boutiqueLibelle'     => $this->boutLib,
-            'botiqueAdresse'      => $this->botAdresse,
-            'boutiqueTel'         => $this->boutTel,
-            'boutiqueFax'         => $this->boutFax,
-            'boutiqueMail'        => $this->boutMail,
+            'id' => $this->id,
+            'boutiqueLibelle' => $this->boutLib,
+            'botiqueAdresse' => $this->botAdresse,
+            'boutiqueTel' => $this->boutTel,
+            'boutiqueFax' => $this->boutFax,
+            'boutiqueMail' => $this->boutMail,
             'boutiqueDescription' => $this->boutDescription,
         ];
     }

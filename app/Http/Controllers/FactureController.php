@@ -25,7 +25,14 @@ class FactureController extends Controller
      */
     public function index(FactureService $factureService): JsonResponse
     {
-        return $this->returnData(FactureResource::collection($factureService->getAllFacture()), '200');
+        try {
+            $data = $factureService->getAllFacture();
+        } catch (\Exception $ex) {
+            return response()->json(["error" => $ex->getMessage()], 422);
+        } catch (\Error $er) {
+            return response()->json(["error" => $er->getMessage()], 422);
+        }
+        return $this->returnData(FactureResource::collection($data), 200);
 
     }
 
